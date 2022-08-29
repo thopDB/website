@@ -42,7 +42,7 @@ export default function Blog({ data }) {
                 <span className="">{data.frontmatter.category}</span>{" "}
                 <span className="">{data.frontmatter.time} min read</span>
               </p>
-              <h4>{data.frontmatter.title}</h4>
+              <Link to={"../.." + data.fields.slug} ><h4>{data.frontmatter.title}</h4></Link>
               <p className="small_content">{data.frontmatter.description}</p>
               <Link to={"../.." + data.fields.slug} className="btn">
                 Read More ➡
