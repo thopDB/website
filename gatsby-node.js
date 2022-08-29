@@ -45,3 +45,49 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     });
   }
 };
+
+// pages/index.tsx
+
+export const query = graphql`
+  query BlogList($limit: Int!, $skip: Int!) {
+    allMarkdownRemark(
+      sort: { fields: frontmatter___date, order: DESC }
+      limit: $limit
+      skip: $skip
+    ) {
+      nodes {
+        ...NodeForBlogList
+      }
+    }
+    allSitePage {
+      nodes {
+        path
+      }
+    }
+  }
+`;
+
+exports.createPages = async ({ graphql, actions }) => {
+  const { createPage } = actions;
+
+  const posts = result.data.allMarkdownRemark.edges;
+  // [Create each blog post page]
+
+  // Create paginated blog list pages
+  const postsPerPage = 20;
+  const numPages = Math.ceil(posts.length / postsPerPage);
+  Array.from({ length: numPages }).forEach((_, i) => {
+    const firstPage = i === 0;
+    const currentPage = i + 1;
+    createPage({
+      path: firstPage ? "/" : `/page/${currentPage}`,
+      component: path.resolve("./src/components/blog.js"),
+      context: {
+        limit: postsPerPage,
+        skip: i * postsPerPage,
+        numPages,
+        currentPage,
+      },
+    });
+  });
+};
